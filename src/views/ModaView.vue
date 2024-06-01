@@ -9,6 +9,8 @@
     />
     <button class="btn mt-4" @click="calcularModa">Calcular</button>
     <h1 class="text-center mt-4">La moda es: {{ moda }}</h1>
+    <h1 class="text-center mt-4" v-if="errorMessage">{{ errorMessage }}</h1>
+
     <h1 class="text-center mt-4">Body: {{ numerosString }}</h1>
     <hr />
   </div>
@@ -18,11 +20,27 @@
 import { ref } from 'vue';
 const moda = ref(0);
 const numerosString = ref('');
+const errorMessage = ref('');
 
 const calcularModa = async () => {
+
+  errorMessage.value = '';
+
+  if (!numerosString.value) {
+    errorMessage.value = 'Por favor, introduce tus números.';
+    return;
+  }
+
+  const numeros = numerosString.value.split(',').map(num => parseFloat(num.trim()));
+
+  if (numeros.length < 20) {
+    errorMessage.value = 'El array de números debe contener al menos 20 elementos.';
+    return;
+  }
+
   const url = 'https://nqvo8awo2c.execute-api.us-east-1.amazonaws.com/moda';
 
-  const numeros = JSON.parse(`[${numerosString.value}]`);
+  //const numeros = JSON.parse(`[${numerosString.value}]`);
 
   const data = {
     numeros: numeros,
